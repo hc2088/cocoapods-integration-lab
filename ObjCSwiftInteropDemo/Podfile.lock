@@ -1,0 +1,22 @@
+PODS:
+  - LegacyObjCPod (1.0.0)
+  - MixedInteropPod (1.0.0):
+    - LegacyObjCPod (= 1.0.0)
+
+DEPENDENCIES:
+  - LegacyObjCPod (from `./LegacyObjCPod`)
+  - MixedInteropPod (from `./MixedInteropPod`)
+
+EXTERNAL SOURCES:
+  LegacyObjCPod:
+    :path: "./LegacyObjCPod"
+  MixedInteropPod:
+    :path: "./MixedInteropPod"
+
+SPEC CHECKSUMS:
+  LegacyObjCPod: c6b53de409bbfb9b92fce91f0ef753c42afb9bcc
+  MixedInteropPod: d9b813a8ba595163d0af30576c827b083e8f9424
+
+PODFILE CHECKSUM: c8737e20a37ec68c48e8e27afab85f8de617f929
+
+COCOAPODS: 1.16.2

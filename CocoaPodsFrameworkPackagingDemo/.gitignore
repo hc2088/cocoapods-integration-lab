@@ -1,0 +1,5 @@
+/.build/
+/MixedBinaryPod/Vendor/
+/Pods/
+/FrameworkPackagingDemo.xcworkspace/
+xcuserdata/

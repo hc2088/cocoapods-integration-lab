@@ -1,6 +1,0 @@
-framework module dynamicframework {
-  umbrella header "dynamicframework.h"
-
-  export *
-  module * { export * }
-}

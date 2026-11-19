@@ -1,0 +1,7 @@
+platform :ios, '15.0'
+project 'ObjCSwiftInteropDemo.xcodeproj'
+
+target 'ObjCSwiftInteropDemo' do
+  pod 'LegacyObjCPod', :path => './LegacyObjCPod', :modular_headers => true
+  pod 'MixedInteropPod', :path => './MixedInteropPod'
+end

@@ -1,0 +1,16 @@
+PODS:
+  - MixedBinaryPod (1.0.0)
+
+DEPENDENCIES:
+  - MixedBinaryPod (from `./MixedBinaryPod`)
+
+EXTERNAL SOURCES:
+  MixedBinaryPod:
+    :path: "./MixedBinaryPod"
+
+SPEC CHECKSUMS:
+  MixedBinaryPod: 11f866fe3dd30c3d71d90a4557328664e0f7ced6
+
+PODFILE CHECKSUM: 8b35a59c403c81a87326403d5cd595336453f1de
+
+COCOAPODS: 1.16.2

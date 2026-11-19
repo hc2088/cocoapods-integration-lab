@@ -1,0 +1,24 @@
+platform :ios, '15.0'
+project 'FrameworkPackagingDemo.xcodeproj'
+workspace 'DefinesModuleDemo'
+
+# Keep a separate Pod build for each App target.
+install! 'cocoapods', :deduplicate_targets => false
+
+target 'NoFrameworkDemo' do
+  pod 'MixedBinaryPod', :path => './MixedBinaryPod', :modular_headers => false
+end
+
+target 'ModularHeadersDemo' do
+  pod 'MixedBinaryPod', :path => './MixedBinaryPod', :modular_headers => true
+end
+
+target 'StaticFrameworkDemo' do
+  use_frameworks! :linkage => :static
+  pod 'MixedBinaryPod', :path => './MixedBinaryPod'
+end
+
+target 'DynamicFrameworkDemo' do
+  use_frameworks! :linkage => :dynamic
+  pod 'MixedBinaryPod', :path => './MixedBinaryPod'
+end
