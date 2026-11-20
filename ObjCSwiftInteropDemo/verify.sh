@@ -17,8 +17,10 @@ products=.build/DerivedData/Build/Products/Debug-iphonesimulator
 mixed="$products/MixedInteropPod"
 app_build=.build/DerivedData/Build/Intermediates.noindex/ObjCSwiftInteropDemo.build/Debug-iphonesimulator/ObjCSwiftInteropDemo.build
 
-printf '\n=== 两个 Pod 的静态归档 ===\n'
-for archive in "$products/LegacyObjCPod/libLegacyObjCPod.a" "$mixed/libMixedInteropPod.a"; do
+printf '\n=== 四个 Pod 的静态归档 ===\n'
+for archive in "$products/LegacyObjCPod/libLegacyObjCPod.a" "$mixed/libMixedInteropPod.a" \
+    "$products/SwiftCallerPod/libSwiftCallerPod.a" \
+    "$products/SwiftToObjCPod/libSwiftToObjCPod.a"; do
     kind="$(file -b "$archive")"
     printf '%s: %s\n' "$archive" "$kind"
     [[ "$kind" == *'current ar archive'* ]]

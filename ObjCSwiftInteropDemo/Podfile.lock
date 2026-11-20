@@ -2,21 +2,33 @@ PODS:
   - LegacyObjCPod (1.0.0)
   - MixedInteropPod (1.0.0):
     - LegacyObjCPod (= 1.0.0)
+  - SwiftCallerPod (1.0.0):
+    - MixedInteropPod (= 1.0.0)
+  - SwiftToObjCPod (1.0.0):
+    - LegacyObjCPod (= 1.0.0)
 
 DEPENDENCIES:
   - LegacyObjCPod (from `./LegacyObjCPod`)
   - MixedInteropPod (from `./MixedInteropPod`)
+  - SwiftCallerPod (from `./SwiftCallerPod`)
+  - SwiftToObjCPod (from `./SwiftToObjCPod`)
 
 EXTERNAL SOURCES:
   LegacyObjCPod:
     :path: "./LegacyObjCPod"
   MixedInteropPod:
     :path: "./MixedInteropPod"
+  SwiftCallerPod:
+    :path: "./SwiftCallerPod"
+  SwiftToObjCPod:
+    :path: "./SwiftToObjCPod"
 
 SPEC CHECKSUMS:
   LegacyObjCPod: c6b53de409bbfb9b92fce91f0ef753c42afb9bcc
   MixedInteropPod: d9b813a8ba595163d0af30576c827b083e8f9424
+  SwiftCallerPod: 092da35b92e16cab3cff996af6bee1107cfd5c73
+  SwiftToObjCPod: 5b040c1d6db37e3eaeb99eb18fe7f6d238bdc64c
 
-PODFILE CHECKSUM: c8737e20a37ec68c48e8e27afab85f8de617f929
+PODFILE CHECKSUM: 21ec2120931a00ec7a917b5e64b09878423c7715
 
 COCOAPODS: 1.16.2

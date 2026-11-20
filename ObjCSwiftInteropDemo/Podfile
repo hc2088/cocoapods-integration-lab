@@ -4,4 +4,6 @@ project 'ObjCSwiftInteropDemo.xcodeproj'
 target 'ObjCSwiftInteropDemo' do
   pod 'LegacyObjCPod', :path => './LegacyObjCPod', :modular_headers => true
   pod 'MixedInteropPod', :path => './MixedInteropPod'
+  pod 'SwiftCallerPod', :path => './SwiftCallerPod'
+  pod 'SwiftToObjCPod', :path => './SwiftToObjCPod'
 end

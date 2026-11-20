@@ -1,6 +1,7 @@
 import Foundation
 import LegacyObjCPod
 import MixedInteropPod
+import SwiftToObjCPod
 
 @objcMembers
 final class AppSwiftBridge: NSObject, InteropHost {
@@ -14,6 +15,10 @@ final class AppSwiftBridge: NSObject, InteropHost {
 
     static func callObjCPod() -> String {
         LegacyObjCBridge.message()
+    }
+
+    static func callFromSwiftPod() -> String {
+        LegacyCaller.callObjectiveC()
     }
 
     func hostMessage() -> String {

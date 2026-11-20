@@ -1,6 +1,6 @@
 # Objective-C 与 Swift 混编 Demo
 
-这个工程用三个范围、十一条实际调用演示 Objective-C 和 Swift 如何调用 App 与 Pod 的接口。主工程只有一个 App target，两个本地 Pod 都以 `.a` 集成。App 界面和控制台显示每条调用从被调用方返回的结果。
+这个工程用三个范围、十四条实际调用演示 Objective-C 和 Swift 如何调用 App 与 Pod 的接口。主工程只有一个 App target，四个本地 Pod 都以 `.a` 集成。App 界面和控制台显示每条调用从被调用方返回的结果。
 
 | Target | 组成 | 模块从哪里来 |
 | --- | --- | --- |
@@ -15,7 +15,7 @@
 open ObjCSwiftInteropDemo.xcworkspace
 ```
 
-在 Xcode 选择 `ObjCSwiftInteropDemo` scheme 和 iOS 模拟器，按 ⌘R。脚本会安装本地 Pods、构建 App，并检查两个 `.a`、纯 Objective-C module map、混编 Pod 的 Swift 子模块，以及 App 和 Pod 的 `-Swift.h`。实测环境为 Xcode 26.6、CocoaPods 1.16.2 和 arm64 iOS 模拟器。
+在 Xcode 选择 `ObjCSwiftInteropDemo` scheme 和 iOS 模拟器，按 ⌘R。脚本会安装本地 Pods、构建 App，并检查四个 `.a`、纯 Objective-C module map、混编 Pod 的 Swift 子模块，以及 App 和 Pod 的 `-Swift.h`。实测环境为 Xcode 26.6、CocoaPods 1.16.2 和 arm64 iOS 模拟器。
 
 ## 1. 主工程内相互调用
 
@@ -34,7 +34,36 @@ App 桥接头和 `-Swift.h` 各管一个方向。桥接头是工程里的源码�
 | `MixedInteropPod` Objective-C → 同 Pod 的 Swift | `PodObjCBridge.m` 导入编译器生成的 `"MixedInteropPod-Swift.h"`，然后调用 `[PodSwiftBridge message]`。 |
 | `MixedInteropPod` Swift → 另一个 Objective-C Pod | podspec 用 `s.dependency 'LegacyObjCPod'` 声明编译依赖。Swift 文件用 `import LegacyObjCPod` 导入这个纯 Objective-C Pod 的 Clang 模块。 |
 
-这里的 `:modular_headers => true` 用于**把已有的纯 Objective-C 静态 Pod 变成 Swift 可以导入的模块**。我在临时副本中移除了 `LegacyObjCPod` 的该选项，`pod install` 会在生成工程前提示 `MixedInteropPod` 依赖的 `LegacyObjCPod` 没有定义模块。恢复选项后，Swift 可以导入它，两个 Pod 仍然生成静态 `.a`。 [CocoaPods 的 Swift 静态库和模块化头文件说明](https://blog.cocoapods.org/CocoaPods-1.5.0/#modular-headers)
+这里的 `:modular_headers => true` 用于**把已有的纯 Objective-C 静态 Pod 变成 Swift 可以导入的模块**。我在临时副本中移除了 `LegacyObjCPod` 的该选项，`pod install` 会在生成工程前提示 `MixedInteropPod` 依赖的 `LegacyObjCPod` 没有定义模块。恢复选项后，Swift 可以导入它，这两个依赖仍然生成静态 `.a`。 [CocoaPods 的 Swift 静态库和模块化头文件说明](https://blog.cocoapods.org/CocoaPods-1.5.0/#modular-headers)
+
+### 独立 Objective-C Pod 调用另一个 Pod 的 Swift
+
+`SwiftCallerPod` 通过 podspec 的 `s.dependency 'MixedInteropPod'` 声明依赖。它的 Objective-C 实现在 `.m` 中导入 CocoaPods 为静态 Pod 暴露的 Swift 子模块。
+
+```objc
+#import "SwiftCaller.h"
+@import MixedInteropPod.Swift;
+```
+
+随后调用 `[PodSwiftBridge message]`。`#import "MixedInteropPod-Swift.h"` 对应本 Demo 中 `MixedInteropPod` 内部对其生成头的导入。跨 Pod 的示例通过 `.Swift` 子模块找到兼容头副本。
+
+反方向由 App 将实现 `InteropHost` 的 `SwiftCaller` 传给 `PodSwiftBridge.callHost`，Swift 调用协议方法回到 Objective-C。编译依赖仍为 `SwiftCallerPod → MixedInteropPod`。两条结果都在 App 的「Pod 内与 Pod 之间」显示。 [调用源码](SwiftCallerPod/Sources/SwiftCaller.m)
+
+### 独立纯 Swift Pod 调用纯 Objective-C Pod
+
+`SwiftToObjCPod` 的 podspec 用 `s.dependency 'LegacyObjCPod', '1.0.0'` 声明依赖。Podfile 给被调用的 `LegacyObjCPod` 设置 `:modular_headers => true`，让 Swift 可以按模块读取它的公开头文件。
+
+```swift
+import LegacyObjCPod
+
+public enum LegacyCaller {
+    public static func callObjectiveC() -> String {
+        LegacyObjCBridge.message()
+    }
+}
+```
+
+App 调用 `LegacyCaller.callObjectiveC()` 后，实际跨 Pod 的调用在 Swift 源文件里完成。结果显示在「Pod 内与 Pod 之间」。 [调用源码](SwiftToObjCPod/Sources/LegacyCaller.swift)
 
 ## 3. 主工程与 Pod 之间的调用
 
@@ -73,4 +102,4 @@ App 桥接头和 `-Swift.h` 各管一个方向。桥接头是工程里的源码�
 
 - 主工程的导入和回调入口在 [AppSwiftBridge.swift](App/AppSwiftBridge.swift)、[main.m](App/main.m) 和 [App 桥接头](App/ObjCSwiftInteropDemo-Bridging-Header.h)。
 - 混编 Pod 的两个调用方向在 [PodSwiftBridge.swift](MixedInteropPod/Sources/PodSwiftBridge.swift) 和 [PodObjCBridge.m](MixedInteropPod/Sources/PodObjCBridge.m)，回调接口在 [InteropHost.h](MixedInteropPod/Sources/InteropHost.h)。
-- `LegacyObjCPod.modulemap` 可在 `Pods/Headers/Public/LegacyObjCPod/` 查看。`MixedInteropPod.modulemap`、`Swift Compatibility Header/MixedInteropPod-Swift.h` 和两个 Pod 的 `.a` 可在 `.build/DerivedData/Build/Products/Debug-iphonesimulator/` 的对应 Pod 目录查看。
+- `LegacyObjCPod.modulemap` 可在 `Pods/Headers/Public/LegacyObjCPod/` 查看。`MixedInteropPod.modulemap`、`Swift Compatibility Header/MixedInteropPod-Swift.h` 和四个 Pod 的 `.a` 可在 `.build/DerivedData/Build/Products/Debug-iphonesimulator/` 的对应 Pod 目录查看。

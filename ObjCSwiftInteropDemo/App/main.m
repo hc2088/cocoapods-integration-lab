@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import "LegacyObjCImportExamples.h"
+#import <SwiftCallerPod/SwiftCaller.h>
 @import MixedInteropPod;
 // CocoaPods 将 Pod 的 Swift 兼容头注册到 .Swift 子模块。
 @import MixedInteropPod.Swift;
@@ -85,7 +86,10 @@ static void AddSection(UIStackView *screen, NSString *title, NSArray<NSString *>
     AddSection(screen, @"Pod 内与 Pod 之间", @[
         CaseResult(@"Swift → 同 Pod 的 Objective-C", [PodSwiftBridge callPodObjC]),
         CaseResult(@"Objective-C → 同 Pod 的 Swift", [PodObjCBridge callSwift]),
-        CaseResult(@"Swift → 另一个 Objective-C Pod", [PodSwiftBridge callObjCDependency])
+        CaseResult(@"Swift → 另一个 Objective-C Pod", [PodSwiftBridge callObjCDependency]),
+        CaseResult(@"SwiftToObjCPod Swift → LegacyObjCPod ObjC", [AppSwiftBridge callFromSwiftPod]),
+        CaseResult(@"SwiftCallerPod ObjC → MixedInteropPod Swift", [SwiftCaller callSwift]),
+        CaseResult(@"MixedInteropPod Swift → SwiftCallerPod ObjC", [PodSwiftBridge callHost:[SwiftCaller new]])
     ]);
     AddSection(screen, @"主工程与 Pod 之间", @[
         CaseResult(@"App Swift → Pod Objective-C", [AppSwiftBridge callObjCPod]),
