@@ -59,6 +59,16 @@ App 桥接头和 `-Swift.h` 各管一个方向。桥接头是工程里的源码�
 @end
 ```
 
+## Objective-C 调 Swift 的三个导入入口
+
+| 调用位置 | 导入方式 | 头文件来源 |
+| --- | --- | --- |
+| App 内部 | `#import "ObjCSwiftInteropDemo-Swift.h"` | App target 的 `DERIVED_SOURCES_DIR` |
+| 混编 Pod 内部 | `#import "MixedInteropPod-Swift.h"` | Pod target 自己的 `DERIVED_SOURCES_DIR` |
+| App 调用静态 Pod 的 Swift | `@import MixedInteropPod.Swift;` | CocoaPods 注册到 `.Swift` 子模块中的兼容头副本 |
+
+在本例的静态库集成里，App 通过生成的 module map 找到 Pod 的 Swift 接口。CocoaPods 的 **Copy generated compatibility header** 阶段将 Pod 编译生成的头复制到 `$(BUILT_PRODUCTS_DIR)/Swift Compatibility Header/MixedInteropPod-Swift.h`（这里的 `BUILT_PRODUCTS_DIR` 属于 Pod target），并在构建产物的 `MixedInteropPod.modulemap` 中添加 `MixedInteropPod.Swift` 子模块。运行 `./verify.sh` 后，可在 `.build/DerivedData/Build/Products/Debug-iphonesimulator/MixedInteropPod/` 查看这两份构建产物。
+
 ## 代码和产物
 
 - 主工程的导入和回调入口在 [AppSwiftBridge.swift](App/AppSwiftBridge.swift)、[main.m](App/main.m) 和 [App 桥接头](App/ObjCSwiftInteropDemo-Bridging-Header.h)。

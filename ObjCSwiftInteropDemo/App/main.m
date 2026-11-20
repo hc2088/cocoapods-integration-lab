@@ -1,7 +1,9 @@
 #import <UIKit/UIKit.h>
 #import "LegacyObjCImportExamples.h"
 @import MixedInteropPod;
+// CocoaPods 将 Pod 的 Swift 兼容头注册到 .Swift 子模块。
 @import MixedInteropPod.Swift;
+// 同一个 App target 内的 Objective-C 通过生成的头文件调用 Swift。
 #import "ObjCSwiftInteropDemo-Swift.h"
 
 @interface AppObjCHost : NSObject <InteropHost>
